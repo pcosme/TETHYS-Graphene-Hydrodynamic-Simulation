@@ -16,15 +16,18 @@
 #images
 *.png
 
+#archives
+*.zip
+*.tar.xz
+*.tar*
 
 
 #CMAke and Clion stuff
 .idea/
-CMakeLists.txt
+!CMakeLists.txt
 USING_HDF5_CMake.txt
 cmake-build-debug/
-
-
+venv/
 
 ###########################################
 # Github Template for C/C++
@@ -82,3 +85,4 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+/venv/

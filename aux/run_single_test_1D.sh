@@ -8,11 +8,12 @@ mkdir -p "$DIRNAME/electronics"
 s=40
 v=10
 l=0.0
-vis=0.1
+vis=0.0
+cyc=0.0
 echo "calculating S="$s
 echo "calculating Vf="$v
 echo "calculating Vc="$l
-./TETHYS_1D $s $v $l $vis 0 
+./TETHYS_1D $s $v $l $vis $cyc 1 
 
 FILENAME1=$(find preview*.dat)
 WORDCOUNT1=$(wc -l preview*.dat)
@@ -30,6 +31,7 @@ LINENUMBER2=${WORDCOUNT2% *}
 mv -- electro_S=*vF=*vis=*l=*.dat "./$DIRNAME/electronics"
 mv -- extrema* "./$DIRNAME/extrema"
 mv -- *.dat "./$DIRNAME"
+mv -- *.h5 "./$DIRNAME"
 mv -- *.log "./$DIRNAME"
 
 

@@ -1,5 +1,5 @@
 # TETHYS - *Two-dimensional Emitter of THz, Hydrodynamic Simulation.*
-## Version 2.2.0
+## Version 2.2.1
 
 [![CodeScore](https://www.code-inspector.com/project/1694/score/svg)](https://www.code-inspector.com/project/1694/score/svg)
 [![CodeStatus](https://www.code-inspector.com/project/1694/status/svg)](https://www.code-inspector.com/project/1694/status/svg)
@@ -33,8 +33,7 @@ Implemented for in 1D+1 and 2D+1 for density and velocity fields.
 
 ## Class Hierarchy
 
-![Classes](/images/classhierarchy.png)
-
+![Classes](/images/class_diagram_fluid+bc.svg)
 
 ## Style guide
 
@@ -67,6 +66,8 @@ Standard form of numeric *major.minor.patch* starting with the initial commit 1.
   <br>&emsp;2.0.3 Linear _for_ loops
   <br>&emsp;2.1.0 Magnetic Field inclusion with _Godunov Splitting_ 
   <br>&emsp;2.2.0 Shear viscosity with FTCS method. Variable Aspect ratio 
+  <br>&emsp;2.2.1 Momentum relaxation in 2D simulations
+ 
 ### Internal syntax
 
 | Type            | Style                                 | E.g.              |
