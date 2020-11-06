@@ -18,9 +18,9 @@ int main(int argc, char **argv){
 	float dt;		// time step
 
 	GrapheneFluid2D graph(parameters);
-	//DyakonovShurBoundaryCondition boundary_condition;
+	DyakonovShurBoundaryCondition boundary_condition;
 	//RobinBoundaryCondition boundary_condition;
-	DirichletBoundaryCondition boundary_condition;
+	//DirichletBoundaryCondition boundary_condition;
 
 	/*......CFL routine to determine dt...............................*/
 	graph.CflCondition();
@@ -58,26 +58,32 @@ int main(int argc, char **argv){
 		t += dt;
 		GrapheneFluid2D::TimeStepCounter++;
 
-		graph.Richtmyer();
-		//boundary_condition.DyakonovShurBc(graph);
-		//boundary_condition.YFree(graph);
 
+		graph.Richtmyer();
+		graph.TimeUpdate();
+
+		boundary_condition.DyakonovShurBc(graph);
+		boundary_condition.YFree(graph);
+
+		/*
 		boundary_condition.YClosedNoSlip(graph);
 		boundary_condition.DensityLeft(graph, 1.0f);
 		boundary_condition.MassFluxXLeft(graph, 1.0f);
 		boundary_condition.XFreeRight(graph);
-
+		*/
 
 		if(graph.GetKinVis()!=0.0f || graph.GetCycFreq()!=0.0f) {
-			graph.ParabolicOperatorFtcs();
-		//graph.ParabolicOperatorDuFortFrankel();
-		//	boundary_condition.DyakonovShurBc(graph);
-		//	boundary_condition.YFree(graph);
+		//	graph.ParabolicOperatorFtcs();
+		graph.ParabolicOperatorDuFortFrankel();
+			graph.TimeUpdate();
+			boundary_condition.DyakonovShurBc(graph);
+			boundary_condition.YFree(graph);
 
-			boundary_condition.YClosedNoSlip(graph);
+	/*		boundary_condition.YClosedNoSlip(graph);
 			boundary_condition.DensityLeft(graph, 1.0f);
 			boundary_condition.MassFluxXLeft(graph, 1.0f);
 			boundary_condition.XFreeRight(graph);
+*/
 		}
 
 
