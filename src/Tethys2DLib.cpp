@@ -81,6 +81,8 @@ void Fluid2D::InitialCondRand(){
 		for (int j=0; j<Ny; j++){
 		float noise =  (float) rd()/maxrand ; //(float) rand()/ (float) RAND_MAX ;
 			Den[i + j * Nx] = 1.0f + 0.005f * (noise - 0.5f);
+			den_old[i + j * Nx]=Den[i + j * Nx];
+			den_new[i + j * Nx]=Den[i + j * Nx];
 		}
 	}
 }
@@ -129,7 +131,7 @@ void Fluid2D::Richtmyer(){
 		int northeast,northwest,southeast,southwest;
 		float den_north, den_south ,den_east ,den_west, px_north, px_south, px_east, px_west, py_north, py_south, py_east, py_west,m_east,m_west,m_north,m_south;
 		float  sound_north, sound_south ,sound_east ,sound_west;
-	this->TimeUpdate();
+
 		//k=i+j*Nx
 		for(int ks=0; ks<=Nx*Ny-Nx-Ny; ks++){ //correr todos os pontos da grelha secundaria de den_mid
 			div_t divresult;
@@ -147,20 +149,20 @@ void Fluid2D::Richtmyer(){
 			sound_east = 0.5f*(vel_snd_arr[northeast] + vel_snd_arr[southeast]);
 			sound_west = 0.5f*(vel_snd_arr[northwest] + vel_snd_arr[southwest]);
 
-			den_north = 0.5f*(den_old[northeast] + den_old[northwest]);
-			den_south = 0.5f*(den_old[southeast] + den_old[southwest]);
-			den_east = 0.5f*(den_old[northeast] + den_old[southeast]);
-			den_west = 0.5f*(den_old[northwest] + den_old[southwest]);
+			den_north = 0.5f*(Den[northeast] + Den[northwest]);
+			den_south = 0.5f*(Den[southeast] + Den[southwest]);
+			den_east = 0.5f*(Den[northeast] + Den[southeast]);
+			den_west = 0.5f*(Den[northwest] + Den[southwest]);
 
-			px_north = 0.5f*(flxX_old[northeast] + flxX_old[northwest]);
-			px_south = 0.5f*(flxX_old[southeast] + flxX_old[southwest]);
-			px_east = 0.5f*(flxX_old[northeast] + flxX_old[southeast]);
-			px_west = 0.5f*(flxX_old[northwest] + flxX_old[southwest]);
+			px_north = 0.5f*(FlxX[northeast] + FlxX[northwest]);
+			px_south = 0.5f*(FlxX[southeast] + FlxX[southwest]);
+			px_east = 0.5f*(FlxX[northeast] + FlxX[southeast]);
+			px_west = 0.5f*(FlxX[northwest] + FlxX[southwest]);
 
-			py_north = 0.5f*(flxY_old[northeast] + flxY_old[northwest]);
-			py_south = 0.5f*(flxY_old[southeast] + flxY_old[southwest]);
-			py_east = 0.5f*(flxY_old[northeast] + flxY_old[southeast]);
-			py_west = 0.5f*(flxY_old[northwest] + flxY_old[southwest]);
+			py_north = 0.5f*(FlxY[northeast] + FlxY[northwest]);
+			py_south = 0.5f*(FlxY[southeast] + FlxY[southwest]);
+			py_east = 0.5f*(FlxY[northeast] + FlxY[southeast]);
+			py_west = 0.5f*(FlxY[northwest] + FlxY[southwest]);
 
 			//posso definir aqui a "massa" nos 4 ponto s cardeais
 			m_east=pow(den_east,1.5f); // e assim sucessivamente m_west m_north m_south que depois sao reutilizadeas nos 12 fluxos
@@ -168,9 +170,9 @@ void Fluid2D::Richtmyer(){
 			m_north=pow(den_north,1.5f);
 			m_south=pow(den_south,1.5f);
 
-			float den_avg = 0.25f * (den_old[southwest] + den_old[southeast] + den_old[northwest] + den_old[northeast]);
-			float flx_x_avg = 0.25f * (flxX_old[southwest] + flxX_old[southeast] + flxX_old[northwest] + flxX_old[northeast]);
-			float flx_y_avg = 0.25f * (flxY_old[southwest] + flxY_old[southeast] + flxY_old[northwest] + flxY_old[northeast]);
+			float den_avg = 0.25f * (Den[southwest] + Den[southeast] + Den[northwest] + Den[northeast]);
+			float flx_x_avg = 0.25f * (FlxX[southwest] + FlxX[southeast] + FlxX[northwest] + FlxX[northeast]);
+			float flx_y_avg = 0.25f * (FlxY[southwest] + FlxY[southeast] + FlxY[northwest] + FlxY[northeast]);
 			den_mid[ks] = den_avg
 					-0.5f*(dt/dx)*(
 						DensityFluxX(den_east, px_east, py_east,m_east,sound_east)-
@@ -237,27 +239,27 @@ void Fluid2D::Richtmyer(){
 				//float den_old = Den[kp];
 				//float flx_x_old = FlxX[kp];
 				//float flx_y_old = FlxY[kp];
-				Den[kp] = den_old[kp] - (dt / dx) * (
+				den_new[kp] = Den[kp] - (dt / dx) * (
 							DensityFluxX(den_east, px_east, py_east,m_east,sound_east)-
 							DensityFluxX(den_west, px_west, py_west,m_west,sound_west))
 						-(dt/dy)*(
 							DensityFluxY(den_north, px_north, py_north,m_north,sound_north)-
 							DensityFluxY(den_south, px_south, py_south,m_south,sound_south))
-						+dt*DensitySource(den_old[kp], flxX_old[kp], flxY_old[kp], 0.0f, 0.0f);
-				FlxX[kp] = flxX_old[kp] - (dt / dx) * (
+						+dt*DensitySource(Den[kp], FlxX[kp], FlxY[kp], 0.0f, 0.0f);
+				flxX_new[kp] = FlxX[kp] - (dt / dx) * (
 							MassFluxXFluxX(den_east, px_east, py_east,m_east,sound_east)-
 							MassFluxXFluxX(den_west, px_west, py_west,m_west,sound_west))
 						-(dt/dy)*(
 							MassFluxXFluxY(den_north, px_north, py_north,m_north,sound_north)-
 							MassFluxXFluxY(den_south, px_south, py_south,m_south,sound_south))
-						+dt*MassFluxXSource(den_old[kp], flxX_old[kp], flxY_old[kp], 0.0f, 0.0f);
-				FlxY[kp] = flxY_old[kp] - (dt / dx) * (
+						+dt*MassFluxXSource(Den[kp], FlxX[kp], FlxY[kp], 0.0f, 0.0f);
+				flxY_new[kp] = FlxY[kp] - (dt / dx) * (
 							MassFluxYFluxX(den_east, px_east, py_east,m_east,sound_east)-
 							MassFluxYFluxX(den_west, px_west, py_west,m_west,sound_west))
 						-(dt/dy)*(
 							MassFluxYFluxY(den_north, px_north, py_north,m_north,sound_north)-
 							MassFluxYFluxY(den_south, px_south, py_south,m_south,sound_south))
-						+dt*MassFluxYSource(den_old[kp], flxX_old[kp], flxY_old[kp], 0.0f, 0.0f);
+						+dt*MassFluxYSource(Den[kp], FlxX[kp], FlxY[kp], 0.0f, 0.0f);
 			}
 		}
 }
@@ -446,13 +448,14 @@ void GrapheneFluid2D:: ParabolicOperatorFtcs() {
 	}
 }
 
-void GrapheneFluid2D::ParabolicOperatorDuFortFrankel() { //TODO TA TUDO ERRADO OS laplacianos tem d ser explicitos
+void GrapheneFluid2D::ParabolicOperatorDuFortFrankel() {
 this->VelocityLaplacianDuFortFrankel();
 float D =  2.0f*dt*kin_vis/(dx*dx);
 	for(int kp=1+Nx; kp<=Nx*Ny-Nx-2; kp++){ //correr a grelha principal evitando as fronteiras
 		if( kp%Nx!=Nx-1 && kp%Nx!=0) {
 			float mass =  pow(Den[kp], 1.5f);
 			float mass_old =  pow(den_old[kp], 1.5f);
+			den_new[kp]  = den_old[kp];
 			flxX_new[kp] = (flxX_old[kp]*(1.0f-2.0f*D/mass_old) + D*lap_flxY[kp] )/(1.0f+2.0f*D/mass);
 			flxY_new[kp] = (flxY_old[kp]*(1.0f-2.0f*D/mass_old) + D*lap_flxY[kp] )/(1.0f+2.0f*D/mass);
 		}
