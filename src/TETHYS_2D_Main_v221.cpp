@@ -59,6 +59,8 @@ int main(int argc, char **argv){
 		GrapheneFluid2D::TimeStepCounter++;
 
 
+
+
 		graph.Richtmyer();
 		graph.TimeUpdate();
 
@@ -73,18 +75,20 @@ int main(int argc, char **argv){
 		*/
 
 		if(graph.GetKinVis()!=0.0f || graph.GetCycFreq()!=0.0f) {
-		//	graph.ParabolicOperatorFtcs();
-		graph.ParabolicOperatorDuFortFrankel();
+			graph.ParabolicOperatorFtcs();
+			//graph.ParabolicOperatorDuFortFrankel();
 			graph.TimeUpdate();
 			boundary_condition.DyakonovShurBc(graph);
 			boundary_condition.YFree(graph);
 
-	/*		boundary_condition.YClosedNoSlip(graph);
-			boundary_condition.DensityLeft(graph, 1.0f);
-			boundary_condition.MassFluxXLeft(graph, 1.0f);
-			boundary_condition.XFreeRight(graph);
-*/
+			/*		boundary_condition.YClosedNoSlip(graph);
+					boundary_condition.DensityLeft(graph, 1.0f);
+					boundary_condition.MassFluxXLeft(graph, 1.0f);
+					boundary_condition.XFreeRight(graph);
+		*/
 		}
+
+
 
 
 		//Record full hdf5 data

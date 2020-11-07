@@ -348,6 +348,8 @@ void DyakonovShurBoundaryCondition::DyakonovShurBc(GrapheneFluid2D& fluid_class)
 		fluid_class.FlxX[nx - 1 + j * nx] = sqrt(fluid_class.Den[nx - 1 + j * nx]);	//constant current at x=L (flux equals mass)
 		fluid_class.FlxY[0 + j * nx] = 0.0f; 					//flux only on x at x=0
 		fluid_class.FlxY[nx - 1 + j * nx] = 0.0f ;					//idem at x=L
+
+
 	}	
 }
 

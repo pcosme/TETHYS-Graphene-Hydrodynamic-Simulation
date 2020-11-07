@@ -28,7 +28,7 @@ int main(int argc, char **argv){
 	/*......CFL routine to determine dt...............................*/
 	grafeno.CflCondition();
 	dt=grafeno.GetDt();
-	grafeno.SetTmax(.2f);
+	grafeno.SetTmax(1.0f);
 
 	/*.........Output files and streams...............................*/
 	grafeno.CreateFluidFile();
@@ -40,7 +40,7 @@ int main(int argc, char **argv){
 	grafeno.InitialCondTest();
 
 	/*................................................................*/
-	grafeno.SetSnapshotStep(5);
+	grafeno.SetSnapshotStep(15);
 	while (t <= grafeno.GetTmax() ){
 
 		t += dt;
@@ -48,11 +48,13 @@ int main(int argc, char **argv){
 		cout<<t<<"\t"<<GrapheneFluid2D::TimeStepCounter<<endl;
 
 
+		grafeno.Richtmyer();
+		grafeno.TimeUpdate();
+		boundary_condition.YFree(grafeno);
+		boundary_condition.XFree(grafeno);
 		//grafeno.ParabolicOperatorFtcs();
 		grafeno.ParabolicOperatorDuFortFrankel();
-
 		grafeno.TimeUpdate();
-
 		boundary_condition.YFree(grafeno);
 		boundary_condition.XFree(grafeno);
 

@@ -16,12 +16,8 @@ class Fluid2D : public TethysBase
 		float * den_mid ;       // mid or auxiliary grids defined with (Nx-1)*(Ny-1) size
 		float * flxX_mid ;
 		float * flxY_mid ;
-	float * den_old ;       // auxiliary grids for t=n-1 defined with (Nx)*(Ny) size
-	float * flxX_old ;
-	float * flxY_old ;
-	float * den_new ;       // auxiliary grids for t=n-1 defined with (Nx)*(Ny) size
-	float * flxX_new ;
-	float * flxY_new ;
+
+
 		float * lap_flxX ;      // mass density flux laplacian component x
 		float * lap_flxY ;      // mass density flux laplacian component y
 		std::ofstream data_preview; // file stream for simplified .dat file output
@@ -29,8 +25,12 @@ class Fluid2D : public TethysBase
 		int snapshot_step = 1;
 
 	public :
-
-
+	float * den_old ;       // auxiliary grids for t=n-1 defined with (Nx)*(Ny) size
+	float * flxX_old ;
+	float * flxY_old ;
+	float * den_new ;       // auxiliary grids for t=n-1 defined with (Nx)*(Ny) size
+	float * flxX_new ;
+	float * flxY_new ;
 		float * Den ;       // number density
 		float * VelX ;      // fluid velocity x component
 		float * VelY ;      // fluid velocity y component
