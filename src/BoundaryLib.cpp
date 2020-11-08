@@ -92,6 +92,7 @@ void BoundaryCondition::YFree(Fluid2D& fluid_class){
 	for (int i=0; i < nx; i++){
 		int bottom=i; //i+0*nx
 		int top= i + (ny - 1) * nx;
+
 		fluid_class.Den[bottom] = fluid_class.Den[bottom + nx];
 		fluid_class.FlxX[bottom] = fluid_class.FlxX[bottom + nx];
 		fluid_class.FlxY[bottom] = fluid_class.FlxY[bottom + nx];
@@ -99,6 +100,13 @@ void BoundaryCondition::YFree(Fluid2D& fluid_class){
 		fluid_class.FlxX[top] = fluid_class.FlxX[top - nx];
 		fluid_class.FlxY[top] = fluid_class.FlxY[top - nx];
 
+
+		fluid_class.den_new[bottom] = fluid_class.den_new[bottom + nx];
+		fluid_class.flxX_new[bottom] = fluid_class.flxX_new[bottom + nx];
+		fluid_class.flxY_new[bottom] = fluid_class.flxY_new[bottom + nx];
+		fluid_class.den_new[top] = fluid_class.den_new[top - nx];
+		fluid_class.flxX_new[top] = fluid_class.flxX_new[top - nx];
+		fluid_class.flxY_new[top] = fluid_class.flxY_new[top - nx];
 	}	 	
 }
 void BoundaryCondition::YFreeTop(Fluid2D &fluid_class) {
@@ -349,7 +357,12 @@ void DyakonovShurBoundaryCondition::DyakonovShurBc(GrapheneFluid2D& fluid_class)
 		fluid_class.FlxY[0 + j * nx] = 0.0f; 					//flux only on x at x=0
 		fluid_class.FlxY[nx - 1 + j * nx] = 0.0f ;					//idem at x=L
 
-
+		fluid_class.den_new[0 + j * nx]=1.0f;			//constant density at x=0
+		fluid_class.den_new[nx - 1 + j * nx]=fluid_class.den_new[nx - 2 + j * nx]; 			//free density at x=L
+		fluid_class.flxX_new[0 + j * nx] = fluid_class.flxX_new[1 + j * nx] * pow(fluid_class.den_new[1 + j * nx], -1.5f);			//free flux at x=0
+		fluid_class.flxX_new[nx - 1 + j * nx] = sqrt(fluid_class.Den[nx - 1 + j * nx]);	//constant current at x=L (flux equals mass)
+		fluid_class.flxY_new[0 + j * nx] = 0.0f; 					//flux only on x at x=0
+		fluid_class.flxY_new[nx - 1 + j * nx] = 0.0f ;					//idem at x=L
 	}	
 }
 

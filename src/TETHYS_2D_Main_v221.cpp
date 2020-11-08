@@ -61,11 +61,22 @@ int main(int argc, char **argv){
 
 
 
-		graph.Richtmyer();
-		graph.TimeUpdate();
 
+		graph.Richtmyer();
 		boundary_condition.DyakonovShurBc(graph);
 		boundary_condition.YFree(graph);
+		if(graph.GetKinVis()!=0.0f || graph.GetCycFreq()!=0.0f) {
+			//graph.ParabolicOperatorFtcs();
+			graph.ParabolicOperatorDuFortFrankel();
+			boundary_condition.DyakonovShurBc(graph);
+			boundary_condition.YFree(graph);
+		}
+
+
+		graph.TimeUpdate();
+
+
+
 
 		/*
 		boundary_condition.YClosedNoSlip(graph);
@@ -74,19 +85,6 @@ int main(int argc, char **argv){
 		boundary_condition.XFreeRight(graph);
 		*/
 
-		if(graph.GetKinVis()!=0.0f || graph.GetCycFreq()!=0.0f) {
-			graph.ParabolicOperatorFtcs();
-			//graph.ParabolicOperatorDuFortFrankel();
-			graph.TimeUpdate();
-			boundary_condition.DyakonovShurBc(graph);
-			boundary_condition.YFree(graph);
-
-			/*		boundary_condition.YClosedNoSlip(graph);
-					boundary_condition.DensityLeft(graph, 1.0f);
-					boundary_condition.MassFluxXLeft(graph, 1.0f);
-					boundary_condition.XFreeRight(graph);
-		*/
-		}
 
 
 

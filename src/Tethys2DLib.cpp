@@ -435,13 +435,15 @@ void GrapheneFluid2D:: ParabolicOperatorFtcs() {
 		this->VelocityLaplacianFtcs();
 	}
 	//FTCS algorithm
-	float sqrtn_0;
+	float sqrtn_0,flx,fly;
 	for (int kp = 1 + Nx; kp <= Nx * Ny - Nx - 2; kp++) { //correr a grelha principal evitando as fronteiras
 		if (kp % Nx != Nx - 1 && kp % Nx != 0) {
-			sqrtn_0=sqrt(Den[kp]);
-			den_new[kp] = Den[kp];
-			flxX_new[kp] = FlxX[kp] + dt * (kin_vis * lap_flxX[kp] - cyc_freq * FlxX[kp] / sqrtn_0);
-			flxY_new[kp] = FlxY[kp] + dt * (kin_vis * lap_flxY[kp] + cyc_freq * FlxY[kp] / sqrtn_0);
+			sqrtn_0=sqrt(den_new[kp]);
+			flx = flxX_new[kp];
+			fly = flxY_new[kp];
+			//den_new[kp] = Den[kp];
+			flxX_new[kp] = flx + dt * (kin_vis * lap_flxX[kp] - cyc_freq * flx / sqrtn_0);
+			flxY_new[kp] = fly + dt * (kin_vis * lap_flxY[kp] + cyc_freq * fly / sqrtn_0);
 		}
 	}
 }
@@ -451,10 +453,10 @@ void GrapheneFluid2D::ParabolicOperatorDuFortFrankel() {
 	float D =  2.0f*dt*kin_vis/(dx*dx);
 	for(int kp=1+Nx; kp<=Nx*Ny-Nx-2; kp++){ //correr a grelha principal evitando as fronteiras
 		if( kp%Nx!=Nx-1 && kp%Nx!=0) {
-			float mass =  pow(den_old[kp], 1.5f);
-			den_new[kp]  = Den[kp];
-			flxX_new[kp] = (flxX_old[kp]*(1.0f-2.0f*D/mass) + D*lap_flxX[kp] )/(1.0f+2.0f*D/mass);
-			flxY_new[kp] = (flxY_old[kp]*(1.0f-2.0f*D/mass) + D*lap_flxY[kp] )/(1.0f+2.0f*D/mass);
+			float mass_new =  pow(den_new[kp], 1.5f);
+			float mass_old =  pow(Den[kp], 1.5f);
+			flxX_new[kp] = (FlxX[kp]*(1.0f - 2.0f * D / mass_old) + D * lap_flxX[kp] ) / (1.0f + 2.0f * D / mass_new);
+			flxY_new[kp] =  (FlxY[kp]*(1.0f - 2.0f * D / mass_old) + D * lap_flxY[kp] ) / (1.0f + 2.0f * D / mass_new);
 		}
 	}
 
@@ -620,6 +622,18 @@ void Fluid2D::VelocityLaplacianFtcs() {
 			south = i + (j - 1) * Nx;
 			east = i + 1 + j * Nx;
 			west = i - 1 + j * Nx;
+			mass_den_center = pow(den_new[kp], 1.5f);
+			mass_den_north = pow(den_new[north], 1.5f);
+			mass_den_south = pow(den_new[south], 1.5f);
+			mass_den_east = pow(den_new[east], 1.5f);
+			mass_den_west = pow(den_new[west], 1.5f);
+			lap_flxX[kp] =
+					(-4.0f * flxX_new[kp] / mass_den_center + flxX_new[north] / mass_den_north + flxX_new[south] / mass_den_south + flxX_new[east] / mass_den_east +
+							flxX_new[west] / mass_den_west) / (dx * dx);
+			lap_flxY[kp] =
+					(-4.0f * flxY_new[kp] / mass_den_center + flxY_new[north] / mass_den_north + flxY_new[south] / mass_den_south + flxY_new[east] / mass_den_east +
+							flxY_new[west] / mass_den_west) / (dx * dx);
+			/*
 			mass_den_center = pow(Den[kp], 1.5f);
 			mass_den_north = pow(Den[north], 1.5f);
 			mass_den_south = pow(Den[south], 1.5f);
@@ -631,6 +645,7 @@ void Fluid2D::VelocityLaplacianFtcs() {
 			lap_flxY[kp] =
 					(-4.0f * FlxY[kp] / mass_den_center + FlxY[north] / mass_den_north + FlxY[south] / mass_den_south + FlxY[east] / mass_den_east +
 					 FlxY[west] / mass_den_west) / (dx * dx);
+			*/
 		}
 	}
 }
@@ -649,31 +664,31 @@ void Fluid2D::VelocityLaplacianDuFortFrankel() {
 			south = i + (j - 1) * Nx;
 			east = i + 1 + j * Nx;
 			west = i - 1 + j * Nx;
-			mass_den_north = pow(Den[north], 1.5f);
-			mass_den_south = pow(Den[south], 1.5f);
-			mass_den_east = pow(Den[east], 1.5f);
-			mass_den_west = pow(Den[west], 1.5f);
+			mass_den_north = pow(den_new[north], 1.5f);
+			mass_den_south = pow(den_new[south], 1.5f);
+			mass_den_east = pow(den_new[east], 1.5f);
+			mass_den_west = pow(den_new[west], 1.5f);
 			lap_flxX[kp] =
-					( FlxX[north] / mass_den_north + FlxX[south] / mass_den_south + FlxX[east] / mass_den_east +
-					 FlxX[west] / mass_den_west) ;
+					( flxX_new[north] / mass_den_north + flxX_new[south] / mass_den_south + flxX_new[east] / mass_den_east +
+							flxX_new[west] / mass_den_west) ;
 			lap_flxY[kp] =
-					( FlxY[north] / mass_den_north + FlxY[south] / mass_den_south + FlxY[east] / mass_den_east +
-					 FlxY[west] / mass_den_west) ;
+					( flxY_new[north] / mass_den_north + flxY_new[south] / mass_den_south + flxY_new[east] / mass_den_east +
+							flxY_new[west] / mass_den_west) ;
 		}
 	}
 }
 
 void Fluid2D::TimeUpdate() {
-	//for(int kp=0; kp<=Nx*Ny-1; kp++){ //correr a grelha principal copiando o array actual pra old
-		for(int kp=1+Nx; kp<=Nx*Ny-Nx-2; kp++){ //correr a grelha principal evitando as fronteiras
-			if( kp%Nx!=Nx-1 && kp%Nx!=0) {
-				den_old[kp] = Den[kp];
+	for(int kp=0; kp<=Nx*Ny-1; kp++){ //correr a grelha principal copiando o array actual pra old
+	//	for(int kp=1+Nx; kp<=Nx*Ny-Nx-2; kp++){ //correr a grelha principal evitando as fronteiras
+	//		if( kp%Nx!=Nx-1 && kp%Nx!=0) {
+			/*	den_old[kp] = Den[kp];
 				flxX_old[kp] = FlxX[kp];
-				flxY_old[kp] = FlxY[kp];
+				flxY_old[kp] = FlxY[kp];*/
 				Den[kp] = den_new[kp];
 				FlxX[kp] = flxX_new[kp];
 				FlxY[kp] = flxY_new[kp];
-			}
+	//		}
 	}
 }
 

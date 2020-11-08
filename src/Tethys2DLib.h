@@ -28,7 +28,7 @@ class Fluid2D : public TethysBase
 	float * den_old ;       // auxiliary grids for t=n-1 defined with (Nx)*(Ny) size
 	float * flxX_old ;
 	float * flxY_old ;
-	float * den_new ;       // auxiliary grids for t=n-1 defined with (Nx)*(Ny) size
+	float * den_new ;       // auxiliary grids for t=n+1 defined with (Nx)*(Ny) size
 	float * flxX_new ;
 	float * flxY_new ;
 		float * Den ;       // number density

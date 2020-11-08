@@ -16,7 +16,7 @@ using namespace std;
 
 
 int main(int argc, char **argv){
-	SetUpParameters parametros(30.0f,10.0f,0.0f,0.02f,0.0f,1,1.0);
+	SetUpParameters parametros(30.0f,10.0f,0.0f,0.025f,0.0f,1,1.0);
 	parametros.DefineGeometry();
 
 	GrapheneFluid2D grafeno(parametros);
@@ -48,10 +48,10 @@ int main(int argc, char **argv){
 		cout<<t<<"\t"<<GrapheneFluid2D::TimeStepCounter<<endl;
 
 
-		grafeno.Richtmyer();
-		grafeno.TimeUpdate();
-		boundary_condition.YFree(grafeno);
-		boundary_condition.XFree(grafeno);
+		//grafeno.Richtmyer();
+		//grafeno.TimeUpdate();
+		//boundary_condition.YFree(grafeno);
+		//boundary_condition.XFree(grafeno);
 		//grafeno.ParabolicOperatorFtcs();
 		grafeno.ParabolicOperatorDuFortFrankel();
 		grafeno.TimeUpdate();
