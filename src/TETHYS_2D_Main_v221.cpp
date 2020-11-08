@@ -60,7 +60,7 @@ int main(int argc, char **argv){
 
 
 
-
+/*
 		graph.TimeUpdate();
 		graph.Richtmyer();
 		boundary_condition.DyakonovShurBc(graph);
@@ -70,9 +70,9 @@ int main(int argc, char **argv){
 			boundary_condition.DyakonovShurBc(graph);
 			boundary_condition.YFree(graph);
 		}
+*/
 
 
-/*
 		if(graph.GetKinVis()!=0.0f || graph.GetCycFreq()!=0.0f) {
 			graph.ParabolicOperatorDuFortFrankel();
 			boundary_condition.DyakonovShurBc(graph);
@@ -83,7 +83,7 @@ int main(int argc, char **argv){
 		boundary_condition.DyakonovShurBc(graph);
 		boundary_condition.YFree(graph);
 		graph.TimeUpdate();
-*/
+
 
 
 
