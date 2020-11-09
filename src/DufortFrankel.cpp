@@ -16,7 +16,7 @@ using namespace std;
 
 
 int main(int argc, char **argv){
-	SetUpParameters parametros(30.0f,10.0f,0.0f,.25f,0.0f,1,1.0);
+	SetUpParameters parametros(30.0f,10.0f,0.0f,.1f,0.0f,1,1.0);
 	parametros.DefineGeometry();
 
 	GrapheneFluid2D grafeno(parametros);
