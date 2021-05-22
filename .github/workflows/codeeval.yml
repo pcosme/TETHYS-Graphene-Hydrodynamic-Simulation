@@ -1,0 +1,13 @@
+name: Code Evaluation
+
+on: [pull_request, push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: action-cpp-lint
+      uses: CyberZHG/github-action-cpp-lint@0.0.2

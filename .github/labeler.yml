@@ -1,0 +1,12 @@
+# Add 'algorithm' label to any change to Richtmyer.cpp file
+algorithm:
+  - Richtmyer.cpp
+library:
+  - dyakonovshur.*
+scripts:
+  -*sh
+  - MakefileOld
+github_automation:
+  -.github/**/*
+documentation:
+  -*md
